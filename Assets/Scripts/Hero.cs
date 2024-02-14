@@ -207,9 +207,10 @@ public class Hero : Entity
 public enum States
 {
     idle,
-    run, 
-    jump,
     attack,
+    damage,
     dead,
-    damage
+    run,
+    jump
 }
+
