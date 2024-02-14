@@ -3,6 +3,7 @@ using UnityEngine;
 public class Entity : MonoBehaviour
 {
     protected int lives;
+
     public virtual void GetDamage()
     {
         lives--;
@@ -15,3 +16,5 @@ public class Entity : MonoBehaviour
         Destroy(gameObject);
     }
 }
+
+
