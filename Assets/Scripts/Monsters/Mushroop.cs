@@ -9,7 +9,6 @@ public class Mushroop : Enemies
     private SpriteRenderer sprite;
 
     private Rigidbody2D rb;
-    private Animator anim;
     private bool isAttacking = false;
 
 
@@ -18,8 +17,11 @@ public class Mushroop : Enemies
     void Start()
     {
         lives = 3;
+    }
+
+    private void Awake()
+    {
         rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
         sprite = GetComponentInChildren<SpriteRenderer>();
     }
 
@@ -39,12 +41,6 @@ public class Mushroop : Enemies
     private void FixedUpdate()
     {
         CheckPlayerPosition();
-    }
-
-    void Update()
-    {
-       
-
     }
     
     void CheckPlayerPosition()
@@ -82,12 +78,6 @@ public class Mushroop : Enemies
 
     void Attack()
     {
-        // Проигрываем анимацию атаки или вызываем метод атаки
-        // Например:
-        // anim.SetTrigger("Attack");
-        // или
-        // target.GetComponent<PlayerHealth>().TakeDamage(attackDamage);
-        // attackDamage - урон атаки
         isAttacking = true;
         // Здесь можно добавить задержку между атаками
         // Например, через Coroutine или использование таймера
