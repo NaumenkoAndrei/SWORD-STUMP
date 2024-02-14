@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Enemies : Entity
 {
-    private bool isDamaging = false;
+    protected bool isDamaging = false;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public virtual void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject == Hero.Instance.gameObject)
         {
@@ -13,12 +13,12 @@ public class Enemies : Entity
         }
 
     }
-    private void OnCollisionExit2D(Collision2D collision)
+    protected void OnCollisionExit2D(Collision2D collision)
     {
         isDamaging = false;
     }
-        
-    private void ApplyDamage()
+
+    protected void ApplyDamage()
     {
         if (isDamaging)
         {
