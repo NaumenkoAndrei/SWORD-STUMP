@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9464305343949873}
   - component: {fileID: 5520205723229735502}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7274907545080328884}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: attackPosRight
   m_TagString: Untagged
   m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
@@ -124,7 +124,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7842257643735367094}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: attackPosLeft
   m_TagString: Untagged
   m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
@@ -164,9 +164,9 @@ GameObject:
   - component: {fileID: 5238430253174297637}
   - component: {fileID: 6949140197635040431}
   - component: {fileID: 4977202403319036710}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Hero
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -180,7 +180,7 @@ Transform:
   m_GameObject: {fileID: 7530522840155505160}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.006, y: 0.473, z: 0.057485033}
+  m_LocalPosition: {x: -16.95, y: 0.473, z: 0.057485033}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -273,16 +273,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a669a1d3a1d4550419a7d4b90d033224, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpSound: {fileID: 0}
-  damageSound: {fileID: 0}
-  attackMiss: {fileID: 0}
-  attackMob: {fileID: 0}
+  jumpSound: {fileID: 963375110065490172}
+  damageSound: {fileID: 3088317502796772356}
+  attackMissSound: {fileID: 5238430253174297637}
+  attackMobSound: {fileID: 6949140197635040431}
+  deadSound: {fileID: 4977202403319036710}
   speed: 3
-  jumpForce: 17
+  jumpForce: 12
   health: 0
-  hearts: []
-  aliveHeart: {fileID: 0}
-  deadHeart: {fileID: 0}
+  hearts:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  aliveHeart: {fileID: 21300000, guid: 2ee956dc42d16c84ba1f5e82c616e092, type: 3}
+  deadHeart: {fileID: 21300000, guid: 14a8c8fc76b1c1d4b81b16808e44db74, type: 3}
   attackPositionRight: {fileID: 7274907545080328884}
   attackPositionLeft: {fileID: 7842257643735367094}
   attackRange: 1
@@ -321,7 +327,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: f42e29fdfffb3394bab0129271e66802, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 6b1c600e26be4af4ebd8f7298ad13810, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.4
   m_Pitch: 1
@@ -417,8 +423,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 4dd942ac55d5b764da694db5b2971a9f, type: 3}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: d07f9d9258633054091aba1589b5fd1f, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -705,9 +711,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
+  m_audioClip: {fileID: 8300000, guid: 5202ef80ba6a43d489dcbd2a91818a7e, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
