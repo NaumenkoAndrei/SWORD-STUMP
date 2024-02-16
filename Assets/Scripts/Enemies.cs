@@ -1,30 +1,31 @@
+using System.Collections;
 using UnityEngine;
 
 public class Enemies : Entity
 {
-    protected bool isDamaging = false;
+    [SerializeField] protected Transform player;
+    [SerializeField] protected float attackRange;
+    [SerializeField] protected float attackCooldown;
+    protected float lastAttackTime;
 
-    public virtual void OnCollisionEnter2D(Collision2D collision)
+    public bool CanAttackPlayer()
     {
-        if (collision.gameObject == Hero.Instance.gameObject)
-        {
-            isDamaging = true;
-            ApplyDamage();
-        }
-
-    }
-    protected void OnCollisionExit2D(Collision2D collision)
-    {
-        isDamaging = false;
+        return Vector2.Distance(transform.position, player.position) <= attackRange;
     }
 
-    protected void ApplyDamage()
+    public IEnumerator ExecuteAttack()
     {
-        if (isDamaging)
-        {
+        if (getDamage)
+            yield break;
+
+        sprite.flipX = player.position.x < transform.position.x;
+        State = States.attack;
+        yield return new WaitForSeconds(0.5f);
+
+        if (CanAttackPlayer())
             Hero.Instance.GetDamage();
-            Invoke("ApplyDamage", 1f);
-        }
-        
+
+        lastAttackTime = Time.time;
     }
+
 }
