@@ -39,6 +39,7 @@ public class Hero : Entity
 
     private Rigidbody2D rb;
     private Collider2D colider;
+    [SerializeField] private LayerMask LayerMaskHero;
 
     public static Hero Instance { get; set; }
 
@@ -50,7 +51,7 @@ public class Hero : Entity
     private void Initialize()
     {
         Instance = this;
-        lives = 5;
+        lives = 500;
         health = lives;
         currentAttackPosition = attackPositionRight;
 
@@ -135,7 +136,7 @@ public class Hero : Entity
 
     public void Attack()
     {
-        if (isGrounded && isRecharged)
+        if (isGrounded && isRecharged && !getDamage)
         {
             State = States.attack;
             isAttacking = true;
@@ -148,17 +149,17 @@ public class Hero : Entity
 
     private void OnAttack()
     {
-        Collider2D[] cillider = Physics2D.OverlapCircleAll(currentAttackPosition.position, attackRange, walkingEnemy | standingEnemy);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(currentAttackPosition.position, attackRange, ~LayerMaskHero);
         
-        if (cillider.Length == 0)
+        if (colliders.Length == 0)
             attackMissSound.Play();
         else
             attackMobSound.Play();
 
-        for (int i = 0; i < cillider.Length; i++)
+        foreach (Collider2D collider in colliders)
         {
-            cillider[i].GetComponent<Entity>().GetDamage();
-            StartCoroutine(EnemyOnAttack(cillider[i]));
+            collider.GetComponent<Entity>().GetDamage();
+            StartCoroutine(EnemyOnAttack(collider));
         }
     }
 
