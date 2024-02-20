@@ -21,12 +21,6 @@ public class Entity : MonoBehaviour
         set { animate.SetInteger("state", (int)value); }
     }
 
-    private void Awake()
-    {
-        animate = GetComponent<Animator>();
-        sprite = GetComponentInChildren<SpriteRenderer>();
-    }
-
     public virtual void GetDamage()
     {
         getDamage = true;
@@ -41,8 +35,13 @@ public class Entity : MonoBehaviour
         getDamage = false;
     }
 
+    private void Awake()
+    {
+        animate = GetComponent<Animator>();
+        sprite = GetComponentInChildren<SpriteRenderer>();
+    }
 
-    public IEnumerator Die(float timeUntilDeletion = 0.8f)
+    public IEnumerator Die(float timeUntilDeletion = 1f)
     {
         State = States.dead;
         yield return new WaitForSeconds(timeUntilDeletion);

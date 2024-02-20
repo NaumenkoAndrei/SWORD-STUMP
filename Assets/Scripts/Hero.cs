@@ -89,7 +89,7 @@ public class Hero : Entity
             speedCurrent = Math.Abs(joystik.Horizontal) >= 0.5f ? speedMax : speedMin;
             Run();
         }
-            
+
         if (isGrounded && joystik.Vertical > 0.5f)
             Jump();
     }
@@ -115,7 +115,7 @@ public class Hero : Entity
         }
         getDamage = false;
     }
-    
+
     private void Run()
     {
         if (isGrounded)
@@ -150,7 +150,7 @@ public class Hero : Entity
     private void OnAttack()
     {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(currentAttackPosition.position, attackRange, ~LayerMaskHero);
-        
+
         if (colliders.Length == 0)
             attackMissSound.Play();
         else
@@ -174,7 +174,7 @@ public class Hero : Entity
         Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, 0.3f);
         isGrounded = collider.Length > 1;
 
-        if (!isGrounded) 
+        if (!isGrounded)
             State = States.jump;
     }
 
