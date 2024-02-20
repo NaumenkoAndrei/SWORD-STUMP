@@ -8,8 +8,7 @@ public class Entity : MonoBehaviour
 
     protected Animator animate;
     protected SpriteRenderer sprite;
-    public LayerMask walkingEnemy;
-    public LayerMask standingEnemy;
+
 
     private void Start()
     {
@@ -43,7 +42,7 @@ public class Entity : MonoBehaviour
     }
 
 
-    public IEnumerator Die(float timeUntilDeletion = 0.75f)
+    public IEnumerator Die(float timeUntilDeletion = 0.8f)
     {
         State = States.dead;
         yield return new WaitForSeconds(timeUntilDeletion);
