@@ -28,12 +28,10 @@ public class Goblin : Enemies
     {
         getDamage = true;
         lives--;
-
         if (lives <= 0)
         {    
             direction = transform.position - player.position;
             rb.AddForce(direction.normalized * deathPushForce, ForceMode2D.Impulse);
-            
             StartCoroutine(Die());
             return;
         }

@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class Mushroop : Enemies
 {
