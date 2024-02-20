@@ -1,110 +1,93 @@
-using TMPro;
+using System.Collections;
 using UnityEngine;
 
 public class Goblin : Enemies
 {
-    [SerializeField] private Transform target; 
-    [SerializeField] private float moveSpeed = 5f; 
-    [SerializeField] private float attackRange = 2f; 
-    [SerializeField] private float viewDistance = 10f;
-    private SpriteRenderer sprite;
-    private Animator anim;
+    [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private float moveSpeed = 5f; // Скорость движения врага
+    [SerializeField] private float viewDistance = 10f; // Радиус зрения
+    [SerializeField] private float deathPushForce = 13f;
+    [SerializeField] private LayerMask walkingEnemy;
+    [SerializeField] private LayerMask standingEnemy;
 
 
     private Rigidbody2D rb;
-    private bool isAttacking = false;
+    private Vector2 direction;
 
-
-    Vector3 lastKnownPlayerPosition;
-
-    protected States State
+    private void Start()
     {
-        get { return (States)anim.GetInteger("state"); }
-        set { anim.SetInteger("state", (int)value); }
-    }
-
-    void Start()
-    {
-        lives = 1;
-    }
-
-    private void Awake()
-    {
+        attackRange = 1.5f;
+        attackCooldown = 1f;
+        lives = 3;
         rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-        sprite = GetComponentInChildren<SpriteRenderer>();
+
+        StartCoroutine(BehaviorPattern());
     }
 
-    public override void OnCollisionEnter2D(Collision2D collision)
+    public override void GetDamage()
     {
-        if (collision.gameObject == Hero.Instance.gameObject)
-        {
-            State = States.attack;
-            target = collision.gameObject.transform;
-            isAttacking = true;
-            ApplyDamage();
+        getDamage = true;
+        lives--;
+
+        if (lives <= 0)
+        {    
+            direction = transform.position - player.position;
+            rb.AddForce(direction.normalized * deathPushForce, ForceMode2D.Impulse);
+            
+            StartCoroutine(Die());
+            return;
         }
-        else
-            rb.velocity = Vector2.zero;
+
+        getDamage = false;
     }
 
-
-
-
-    private void FixedUpdate()
+    private IEnumerator BehaviorPattern()
     {
-        CheckPlayerPosition();
-    }
-    
-    void CheckPlayerPosition()
-    {
-        Vector3 targetDirection = target.position - transform.position;
-
-        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, targetDirection.normalized, targetDirection.magnitude);
-        foreach (RaycastHit2D hit in hits)
-            if (!hit.collider.CompareTag("Player"))
+        while (true)
+        {
+            yield return null;
+            
+            if (getDamage)
             {
-                State = States.idle;
-                return;
+                lastAttackTime = Time.time;
+                continue;
             }
                 
-
-        RaycastHit2D playerHit = Physics2D.Raycast(transform.position, targetDirection.normalized, Mathf.Infinity);
-        if (playerHit.collider != null && playerHit.collider.CompareTag(tag: "Player"))
-        {
-            lastKnownPlayerPosition = playerHit.collider.transform.position;
-
-            float distanceToTarget = Vector3.Distance(transform.position, target.position);
-
-            if (distanceToTarget <= attackRange && !isAttacking)
-                Attack();
-            else if (distanceToTarget <= viewDistance && !isAttacking)
-                MoveTowardsTarget(lastKnownPlayerPosition);
-            else if (!isAttacking)
-                State = States.idle;
+            if (CanSeePlayer())
+            {
+                if (!CanAttackPlayer())
+                    MoveTowardsPlayer();
+                else if (CanAttackPlayer() && Time.time > lastAttackTime + attackCooldown)
+                    yield return StartCoroutine(ExecuteAttack());
+                else
+                {
+                    State = States.idle;
+                    yield return new WaitForSeconds(0.35f);
+                }
+            }
             else
-                isAttacking = false;
-                
+            {
+                State = States.idle;
+                yield return new WaitForSeconds(0.35f);
+            }
         }
-        else
-            MoveTowardsTarget(lastKnownPlayerPosition);
-            
     }
 
-    void MoveTowardsTarget(Vector3 targetPosition)
+    private bool CanSeePlayer()
     {
+        direction = player.position - transform.position;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, viewDistance, LayerMask.GetMask("Default") | playerLayer | standingEnemy);
+
+        return hit.collider != null && hit.collider.CompareTag("Hero");
+    }
+
+    private void MoveTowardsPlayer()
+    {
+        if (getDamage)
+            return;
+        
         State = States.run;
-        Vector3 direction = (target.position - transform.position).normalized;
-
-        rb.velocity = new Vector2(direction.x * moveSpeed, rb.velocity.y);
-        sprite.flipX = direction.x < 0.0f;
-    }
-
-    void Attack()
-    {
-
-
+        transform.position = Vector3.MoveTowards(transform.position, player.position, moveSpeed * Time.deltaTime);
+        sprite.flipX = player.position.x < transform.position.x;
     }
 }
-
-
