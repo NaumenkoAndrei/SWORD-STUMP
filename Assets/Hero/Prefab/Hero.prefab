@@ -155,7 +155,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5077041744981591327}
-  - component: {fileID: 3586809637886727022}
+  - component: {fileID: 6721543945763770745}
   - component: {fileID: 5440921009465106758}
   - component: {fileID: 3648544165329730127}
   - component: {fileID: 3625990381961324183}
@@ -189,8 +189,8 @@ Transform:
   - {fileID: 7842257643735367094}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &3586809637886727022
-BoxCollider2D:
+--- !u!70 &6721543945763770745
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -221,19 +221,9 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.002191782, y: 0.79316056}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
-    oldSize: {x: 1, y: 0.55}
-    newSize: {x: 1, y: 0.55}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.7955384, y: 1.6156914}
-  m_EdgeRadius: 0
+  m_Offset: {x: 0.0028209686, y: 0.78860486}
+  m_Size: {x: 0.7651901, y: 1.5894496}
+  m_Direction: 0
 --- !u!50 &5440921009465106758
 Rigidbody2D:
   serializedVersion: 4
@@ -278,9 +268,9 @@ MonoBehaviour:
   attackMissSound: {fileID: 5238430253174297637}
   attackMobSound: {fileID: 6949140197635040431}
   deadSound: {fileID: 4977202403319036710}
-  speed: 3
   jumpForce: 12
-  health: 0
+  speedMin: 3
+  speedMax: 6
   hearts:
   - {fileID: 0}
   - {fileID: 0}
@@ -289,13 +279,14 @@ MonoBehaviour:
   - {fileID: 0}
   aliveHeart: {fileID: 21300000, guid: 2ee956dc42d16c84ba1f5e82c616e092, type: 3}
   deadHeart: {fileID: 21300000, guid: 14a8c8fc76b1c1d4b81b16808e44db74, type: 3}
+  health: 0
+  attackRange: 1
   attackPositionRight: {fileID: 7274907545080328884}
   attackPositionLeft: {fileID: 7842257643735367094}
-  attackRange: 1
-  enemy:
-    serializedVersion: 2
-    m_Bits: 256
   joystik: {fileID: 0}
+  LayerMaskHero:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!95 &3625990381961324183
 Animator:
   serializedVersion: 5
