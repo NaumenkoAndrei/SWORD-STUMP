@@ -6,40 +6,42 @@ using UnityEngine.UI;
 public class Hero : Entity
 {
     [Header("Audio")]
-    [SerializeField] private AudioSource jumpSound;
-    [SerializeField] private AudioSource damageSound;
-    [SerializeField] private AudioSource attackMissSound;
-    [SerializeField] private AudioSource attackMobSound;
-    [SerializeField] private AudioSource deadSound;
+    [SerializeField] private AudioSource _jumpSound;
+    [SerializeField] private AudioSource _damageSound;
+    [SerializeField] private AudioSource _attackMissSound;
+    [SerializeField] private AudioSource _attackMobSound;
+    [SerializeField] private AudioSource _deadSound;
 
     [Header("Movement")]
-    [SerializeField] private float jumpForce = 0.6f;
-    [SerializeField] private float speedMin = 3f;
-    [SerializeField] private float speedMax = 6f;
+    [SerializeField] private float _jumpForce = 0.6f;
+    [SerializeField] private float _speedMin = 3f;
+    [SerializeField] private float _speedMax = 6f;
     private float speedCurrent;
 
     [Header("Health")]
-    [SerializeField] private Image[] hearts;
-    [SerializeField] private Sprite aliveHeart;
-    [SerializeField] private Sprite deadHeart;
-    [SerializeField] private float health;
+    [SerializeField] private Image[] _hearts;
+    [SerializeField] private Sprite _aliveHeart;
+    [SerializeField] private Sprite _deadHeart;
+    [SerializeField] private float _health;
 
     [Header("Attack")]
-    [SerializeField] private float attackRange;
-    [SerializeField] private Transform attackPositionRight;
-    [SerializeField] private Transform attackPositionLeft;
-    private Transform currentAttackPosition;
-    private bool isAttacking = false;
+    [SerializeField] private float _attackRange;
+    [SerializeField] private Transform _attackPositionRight;
+    [SerializeField] private Transform _attackPositionLeft;
+    private Transform _currentAttackPosition;
+    private bool _isAttacking = false;
 
     [Header("Controls")]
-    public Joystick joystik;
+    [SerializeField] private Joystick _joystik;
 
-    private bool isGrounded = false;
-    private bool isRecharged = true;
+    private bool _isGrounded = false;
+    private bool _isRecharged = true;
 
-    private Rigidbody2D rb;
-    private Collider2D colider;
-    [SerializeField] private LayerMask LayerMaskHero;
+    private Rigidbody2D _rigidbody;
+    private Collider2D _colider;
+    private Collider2D[] _colliders;
+    [SerializeField] private LayerMask _layerMaskHero;
+    [SerializeField] private GameObject _losePanel;
 
     public static Hero Instance { get; set; }
 
@@ -50,97 +52,116 @@ public class Hero : Entity
 
     private void Initialize()
     {
+        _losePanel.SetActive(false);
         Instance = this;
-        lives = 500;
-        health = lives;
-        currentAttackPosition = attackPositionRight;
+        _lives = 5;
+        _health = _lives;
+        _currentAttackPosition = _attackPositionRight;
 
-        rb = GetComponent<Rigidbody2D>();
-        animate = GetComponent<Animator>();
-        sprite = GetComponentInChildren<SpriteRenderer>();
-        colider = GetComponentInChildren<Collider2D>();
+        _rigidbody = GetComponent<Rigidbody2D>();
+        _animate = GetComponent<Animator>();
+        _sprite = GetComponentInChildren<SpriteRenderer>();
+        _colider = GetComponentInChildren<Collider2D>();
     }
 
     private void FixedUpdate()
     {
         UpdateHearts();
-        CheckGround();
     }
 
     private void UpdateHearts()
     {
-        for (int i = 0; i < hearts.Length; i++)
+        for (int i = 0; i < _hearts.Length; i++)
         {
-            hearts[i].sprite = i < health ? aliveHeart : deadHeart;
-            hearts[i].enabled = i < lives;
+            _hearts[i].sprite = i < _health ? _aliveHeart : _deadHeart;
+            _hearts[i].enabled = i < _lives;
         }
     }
 
     private void Update()
     {
-        if (getDamage || isAttacking)
+        if (_getDamage || _isAttacking)
             return;
 
-        if (isGrounded)
+        CheckGround();
+
+        if (_isGrounded)
             State = States.idle;
 
-        if (joystik.Horizontal != 0)
+        if (_joystik.Horizontal != 0)
         {
-            speedCurrent = Math.Abs(joystik.Horizontal) >= 0.5f ? speedMax : speedMin;
+            speedCurrent = Math.Abs(_joystik.Horizontal) >= 0.5f ? _speedMax : _speedMin;
             Run();
         }
 
-        if (isGrounded && joystik.Vertical > 0.5f)
+        if (_isGrounded && _joystik.Vertical > 0.5f)
             Jump();
     }
 
-    public override void GetDamage()
+    public void GetDamage()
     {
-        if (getDamage) return;
+        if (_getDamage) return;
 
-        getDamage = true;
+        _getDamage = true;
 
-        health--;
-        if (health > 0)
-            damageSound.Play();
+        _health--;
+        if (_health > 0)
+            _damageSound.Play();
 
-        StartCoroutine(EnemyOnAttack(colider));
-        if (health == 0)
+        StartCoroutine(EnemyOnAttack(_colider));
+        if (_health == 0)
         {
-            foreach (var heart in hearts)
-                heart.sprite = deadHeart;
-            deadSound.Play();
-            StartCoroutine(Die(1.4f));
+            foreach (var heart in _hearts)
+                heart.sprite = _deadHeart;
+            _deadSound.Play();
+            StartCoroutine(Die());
             return;
         }
-        getDamage = false;
+        _getDamage = false;
+    }
+
+    private IEnumerator Die(float timeUntilDeletion = 1.4f)
+    {
+        State = States.dead;
+        yield return new WaitForSeconds(timeUntilDeletion);
+        Destroy(gameObject);
+        LosePanel();
+    }
+
+    public void LosePanel()
+    {
+        _losePanel.SetActive(true);
+        Time.timeScale = 0;
     }
 
     private void Run()
     {
-        if (isGrounded)
+        if (_isGrounded)
             State = States.run;
 
-        Vector3 dir = transform.right * joystik.Horizontal;
+        Vector3 dir = transform.right * _joystik.Horizontal;
         transform.position = Vector3.MoveTowards(transform.position, transform.position + dir, speedCurrent * Time.deltaTime);
-        sprite.flipX = dir.x < 0.0f;
+        _sprite.flipX = dir.x < 0.0f;
 
-        currentAttackPosition = dir.x < 0.0f ? attackPositionLeft : attackPositionRight;
+        _currentAttackPosition = dir.x < 0.0f ? _attackPositionLeft : _attackPositionRight;
     }
 
     private void Jump()
     {
-        jumpSound.Play();
-        rb.velocity = Vector2.up * jumpForce;
+        if (_isGrounded)
+        {
+            _jumpSound.Play();
+            _rigidbody.velocity = Vector2.up * _jumpForce;
+        }
     }
 
     public void Attack()
     {
-        if (isGrounded && isRecharged && !getDamage)
+        if (_isGrounded && _isRecharged && !_getDamage)
         {
             State = States.attack;
-            isAttacking = true;
-            isRecharged = false;
+            _isAttacking = true;
+            _isRecharged = false;
 
             StartCoroutine(AttackAnimation());
             StartCoroutine(AttackCoolDown());
@@ -149,16 +170,16 @@ public class Hero : Entity
 
     private void OnAttack()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(currentAttackPosition.position, attackRange, ~LayerMaskHero);
+        _colliders = Physics2D.OverlapCircleAll(_currentAttackPosition.position, _attackRange, ~_layerMaskHero);
 
-        if (colliders.Length == 0)
-            attackMissSound.Play();
+        if (_colliders.Length == 0)
+            _attackMissSound.Play();
         else
-            attackMobSound.Play();
+            _attackMobSound.Play();
 
-        foreach (Collider2D collider in colliders)
+        foreach (Collider2D collider in _colliders)
         {
-            collider.GetComponent<Entity>().GetDamage();
+            collider.GetComponent<Enemies>().GetDamage();
             StartCoroutine(EnemyOnAttack(collider));
         }
     }
@@ -166,28 +187,28 @@ public class Hero : Entity
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(currentAttackPosition.position, attackRange);
+        Gizmos.DrawWireSphere(_currentAttackPosition.position, _attackRange);
     }
 
     private void CheckGround()
     {
-        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, 0.3f);
-        isGrounded = collider.Length > 1;
+        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, 0.1f);
+        _isGrounded = collider.Length > 1;
 
-        if (!isGrounded)
+        if (!_isGrounded)
             State = States.jump;
     }
 
     private IEnumerator AttackAnimation()
     {
         yield return new WaitForSeconds(0.4f);
-        isAttacking = false;
+        _isAttacking = false;
     }
 
     private IEnumerator AttackCoolDown()
     {
         yield return new WaitForSeconds(0.5f);
-        isRecharged = true;
+        _isRecharged = true;
     }
 
     private IEnumerator EnemyOnAttack(Collider2D enemy)

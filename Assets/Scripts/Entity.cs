@@ -1,53 +1,29 @@
 using UnityEngine;
-using System.Collections;
 
 public class Entity : MonoBehaviour
 {
-    protected int lives;
-    protected bool getDamage;
+    protected int _lives;
+    protected bool _getDamage = false;
 
-    protected Animator animate;
-    protected SpriteRenderer sprite;
-
-
-    private void Start()
-    {
-        getDamage = false;
-    }
+    protected Animator _animate;
+    protected SpriteRenderer _sprite;
 
     public States State
     {
-        get { return (States)animate.GetInteger("state"); }
-        set { animate.SetInteger("state", (int)value); }
-    }
-
-    public virtual void GetDamage()
-    {
-        getDamage = true;
-        lives--;
-
-        if (lives <= 0)
-        {
-            StartCoroutine(Die());
-            return;
-        }
-
-        getDamage = false;
+        get { return (States)_animate.GetInteger("state"); }
+        set { _animate.SetInteger("state", (int)value); }
     }
 
     private void Awake()
     {
-        animate = GetComponent<Animator>();
-        sprite = GetComponentInChildren<SpriteRenderer>();
+        _animate = GetComponent<Animator>();
+        _sprite = GetComponentInChildren<SpriteRenderer>();
     }
 
-    public IEnumerator Die(float timeUntilDeletion = 1f)
+    public void OnDestroy()
     {
-        State = States.dead;
-        yield return new WaitForSeconds(timeUntilDeletion);
         Destroy(gameObject);
     }
-
 }
 
 public enum States

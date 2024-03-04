@@ -2,21 +2,21 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private Transform player;
-    private Vector3 pos;
+    [SerializeField] private Transform _player;
+    private Vector3 _playerPosition;
 
     private void Awake()
     {
-        if(!player)
-            player = FindAnyObjectByType<Hero>().transform;
+        if(!_player)
+            _player = FindAnyObjectByType<Hero>().transform;
     }
 
     private void Update()
     {
-        pos = player.position;
-        pos.z = -10f;
-        pos.y += 1f;
+        _playerPosition = _player.position;
+        _playerPosition.z = -10f;
+        _playerPosition.y += 1f;
 
-        transform.position = Vector3.Lerp(transform.position, pos, Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, _playerPosition, Time.deltaTime);
     }
 }

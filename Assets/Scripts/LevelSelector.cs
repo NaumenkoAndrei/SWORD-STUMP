@@ -4,16 +4,17 @@ using UnityEngine.SceneManagement;
 
 public class LevelSelector : MonoBehaviour
 {
-    public int levelsAvailable = 1;
+    public int LevelsAvailable = 1;
+    private int _levelReached;
 
-    public Button[] levels;
+    public Button[] Levels;
     void Start()
     {
-        int levelReached = PlayerPrefs.GetInt("levelReached", levelsAvailable);
+        _levelReached = PlayerPrefs.GetInt("levelReached", LevelsAvailable);
 
-        for (int i = 0; i < levels.Length; i++)
-            if (i + 1 > levelReached)
-                levels[i].interactable = false;
+        for (int i = 0; i < Levels.Length; i++)
+            if (i + 1 > _levelReached)
+                Levels[i].interactable = false;
     }
 
     public void ToMenu()

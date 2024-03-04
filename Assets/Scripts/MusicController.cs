@@ -2,18 +2,16 @@ using UnityEngine;
 
 public class MusicController : MonoBehaviour
 {
-    private static MusicController instance;
+    private static MusicController _instance;
 
     public void Awake()
     {
-        if (instance != null)
+        if (_instance != null)
             Destroy(gameObject);
         else
         {
-            instance = this;
+            _instance = this;
             DontDestroyOnLoad(transform.gameObject);
         }
     }
-
-
 }
